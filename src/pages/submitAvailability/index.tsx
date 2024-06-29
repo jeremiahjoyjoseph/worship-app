@@ -1,9 +1,8 @@
-import { AxiosResponse } from "axios";
 import { useEffect, useState, type FC } from "react";
-import { User } from "../../interfaces/user";
-import axiosInstance from "../../services/instance";
-import Search from "./components/search";
 import { useParams } from "react-router-dom";
+import { User } from "../../interfaces/user";
+import { getAllUsers } from "../../services/submitAvailability";
+import Search from "./components/search";
 
 const SubmitAvailability: FC = function () {
   const [allMembers, setAllMembers] = useState<User[]>();
@@ -12,18 +11,6 @@ const SubmitAvailability: FC = function () {
   useEffect(() => {
     getAllUsersOnLoad();
   }, []);
-
-  // Define the function to get all users
-  async function getAllUsers(): Promise<any> {
-    try {
-      const response: AxiosResponse<any> = await axiosInstance.get("/user/all");
-      return response.data;
-    } catch (error) {
-      // Handle error
-      console.error("Error fetching user data:", error);
-      throw error; // Rethrow error if needed
-    }
-  }
 
   const getAllUsersOnLoad = () => {
     // Call the function and log the users
@@ -56,9 +43,9 @@ const SubmitAvailability: FC = function () {
                   <g
                     fill="none"
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                   >
                     <path d="m9 11l3 3l8-8" />
                     <path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" />
@@ -78,9 +65,9 @@ const SubmitAvailability: FC = function () {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m1 9 4-4-4-4"
                   />
                 </svg>

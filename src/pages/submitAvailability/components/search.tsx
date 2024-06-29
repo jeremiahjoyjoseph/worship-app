@@ -11,23 +11,18 @@ interface SearchProps {
 
 const Search: React.FC<SearchProps> = ({ options, placeholder, rosterId }) => {
   const navigate = useNavigate();
-  const [selectedOption, setSelectedOption] = useState<User | null>(null);
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredOptions, setFilteredOptions] = useState<User[]>(options);
 
   useEffect(() => {
-    let filteredOptions = options.filter((option) =>
+    const filteredOptions = options.filter((option) =>
       option.firstName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredOptions(filteredOptions);
-
-    if (searchTerm) {
-      setSelectedOption(null);
-    }
   }, [searchTerm]);
 
   const handleSelect = (option: User) => {
-    setSelectedOption(option);
     setSearchTerm("");
     navigate(`/select-dates/${rosterId}/${option._id}`);
   };
@@ -44,7 +39,7 @@ const Search: React.FC<SearchProps> = ({ options, placeholder, rosterId }) => {
         />
       </div>
       {searchTerm && (
-        <div className="z-10 w-full bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        <div className="z-10 w-full bg-white divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 mt-2">
           <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
