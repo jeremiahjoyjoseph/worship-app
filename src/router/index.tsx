@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import DashboardPage from "../pages";
 import SubmitAvailability from "../pages/submitAvailability";
 import SelectDates from "../pages/submitAvailability/pages/selectDates";
+import ThankYou from "../pages/submitAvailability/pages/thankYou";
 
 const AppRouter: FC = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter: FC = () => {
         element={<SelectDates />}
         index
       />
+      <Route path="/thank-you" element={<ThankYou />} index />
     </Routes>
   );
 };
