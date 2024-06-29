@@ -25,6 +25,11 @@ const SelectDates: FC<SelectDatesProps> = () => {
     getRoster({ id })
       .then((response) => {
         setDates(response.data.requiredDates);
+        const userSubmission = response.data.submissions.find(
+          (x) => x.userId === params.userId
+        );
+        const userSubmittedDates = userSubmission?.submittedDates || [];
+        setSelectedDates(userSubmittedDates);
       })
       .catch((error) => {
         console.error("Error:", error);

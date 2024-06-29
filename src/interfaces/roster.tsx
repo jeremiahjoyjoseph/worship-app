@@ -39,7 +39,7 @@ export interface Submission {
   userId: string;
   userData: UserData;
   hasSubmittedDates: boolean;
-  submittedDates: string[]; // Array of strings representing dates
+  submittedDates: RequiredDate[]; // Array of strings representing dates
   _id: string;
 }
 
