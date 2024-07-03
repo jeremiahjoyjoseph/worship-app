@@ -24,7 +24,7 @@ const Search: React.FC<SearchProps> = ({ options, placeholder, rosterId }) => {
 
   const handleSelect = (option: User) => {
     setSearchTerm("");
-    navigate(`/select-dates/${rosterId}/${option._id}`);
+    navigate(`/submit/dates/${rosterId}/${option._id}`);
   };
 
   return (

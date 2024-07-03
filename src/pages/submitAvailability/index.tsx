@@ -78,7 +78,7 @@ const SubmitAvailability: FC = function () {
             </li>
           </ol>
         </nav>
-        <div className="mt-8">
+        <div>
           {allMembers && (
             <Search
               options={allMembers}

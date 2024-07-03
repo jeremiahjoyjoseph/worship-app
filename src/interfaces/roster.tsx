@@ -1,10 +1,4 @@
-// Define the type for individual required date items
-export interface RequiredDate {
-  _id: string;
-  eventName: string;
-  sermonTopic?: string; // sermonTopic is optional as not all entries have it
-  eventDate: string;
-}
+import { Event } from "./event";
 
 // Define the type for user data inside submissions
 export interface UserData {
@@ -39,7 +33,7 @@ export interface Submission {
   userId: string;
   userData: UserData;
   hasSubmittedDates: boolean;
-  submittedDates: RequiredDate[]; // Array of strings representing dates
+  submittedDates: Event[]; // Array of strings representing dates
   _id: string;
 }
 
@@ -47,7 +41,7 @@ export interface Submission {
 export interface Roster {
   _id: string;
   month: string; // Month format should be MM/YYYY
-  requiredDates: RequiredDate[];
+  requiredDates: Event[];
   submissions: Submission[];
   roster: any[]; // Assuming roster can be an array of any type, could be refined based on additional details
   createdAt: string;

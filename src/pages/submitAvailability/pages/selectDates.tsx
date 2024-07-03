@@ -53,7 +53,7 @@ const SelectDates: FC<SelectDatesProps> = () => {
 
     submitAvailabilityApi(apiParams, selectedDates)
       .then(() => {
-        navigate("/thank-you");
+        navigate("/submit/thank-you");
       })
       .catch((error) => {
         console.error("Error:", error);
