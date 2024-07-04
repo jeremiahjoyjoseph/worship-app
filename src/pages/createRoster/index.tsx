@@ -1,15 +1,14 @@
+import { Modal, ModalInterface, ModalOptions } from "flowbite";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Event } from "../../interfaces/event";
 import { getEventsApi } from "../../services/createRoster";
-import Search from "./components/search";
 import { capitalizeFirstLetter } from "../../util/helperFunctions";
-import { Modal, ModalInterface, ModalOptions } from "flowbite";
-import AddEventDrawer from "./components/addEventDrawer";
+import AddEventModal from "./components/addEventModal";
 
 interface CreateRosterProps {}
 
 const modalOptions: ModalOptions = {
-  placement: "right",
+  placement: "center",
   backdrop: "dynamic",
   backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-20",
   closable: true,
@@ -142,9 +141,9 @@ const CreateRoster: FC<CreateRosterProps> = () => {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M5 12h14m-7 7V5"
             />
           </svg>
@@ -171,12 +170,12 @@ const CreateRoster: FC<CreateRosterProps> = () => {
 
       <button
         type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 font-medium text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 fixed bottom-0 left-0 w-full"
+        className="h-[50px] text-white bg-blue-700 hover:bg-blue-800 font-medium text-md px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 fixed bottom-0 left-0 w-full"
       >
         Create Roster
       </button>
 
-      <AddEventDrawer
+      <AddEventModal
         modalRef={modalRef}
         closeModal={closeModal}
         events={events}

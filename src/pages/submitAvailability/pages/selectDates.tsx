@@ -4,16 +4,17 @@ import {
   getRoster,
   submitAvailabilityApi,
 } from "../../../services/submitAvailability";
-import { RequiredDate } from "../../../interfaces/roster";
+
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import { Event } from "../../../interfaces/event";
 
 interface SelectDatesProps {}
 
 const SelectDates: FC<SelectDatesProps> = () => {
   const navigate = useNavigate();
   const params = useParams<{ rosterId: string; userId: string }>();
-  const [dates, setDates] = useState<RequiredDate[]>([]);
-  const [selectedDates, setSelectedDates] = useState<RequiredDate[]>([]);
+  const [dates, setDates] = useState<Event[]>([]);
+  const [selectedDates, setSelectedDates] = useState<Event[]>([]);
 
   useEffect(() => {
     getDates();
@@ -36,7 +37,7 @@ const SelectDates: FC<SelectDatesProps> = () => {
       });
   };
 
-  const handleCheckboxClick = (date: RequiredDate) => {
+  const handleCheckboxClick = (date: Event) => {
     if (selectedDates.find((item) => item._id === date._id)) {
       const newDates = selectedDates.filter((item) => item._id !== date._id);
       setSelectedDates(newDates);
@@ -186,7 +187,7 @@ const SelectDates: FC<SelectDatesProps> = () => {
       <button
         type="button"
         onClick={() => handleSubmit()}
-        className="text-white bg-blue-700 hover:bg-blue-800 font-medium text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 fixed bottom-0 left-0 w-full"
+        className="h-[50px] text-white bg-blue-700 hover:bg-blue-800 font-medium text-md px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 fixed bottom-0 left-0 w-full"
       >
         Submit
       </button>
