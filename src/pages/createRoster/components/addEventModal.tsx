@@ -1,13 +1,21 @@
-import { FC, RefObject, useState } from "react";
+import { FC, RefObject, useEffect, useState } from "react";
 import { Event, Location } from "../../../interfaces/event";
 import Search from "./search";
 import Datepicker from "./datepicker";
 import moment from "moment";
+import MultiSelect from "./multiSelect";
+import { getLocationsApi } from "../../../services/createRoster";
+import { capitalizeFirstLetter } from "../../../util/helperFunctions";
 
 interface AddEventModalProps {
   modalRef: RefObject<HTMLDivElement>;
   closeModal: () => void;
   events: Event[];
+  handleAdd: (param1: Event) => void;
+}
+
+export interface LocationSelect extends Location {
+  isChecked?: boolean;
 }
 
 interface AddEventFormInterface {
@@ -16,7 +24,7 @@ interface AddEventFormInterface {
   eventEndDate?: string;
   sermonTopic?: string;
   sermonNote?: string;
-  location?: Location[];
+  location?: LocationSelect[];
 }
 
 const AddEventModal: FC<AddEventModalProps> = ({
@@ -30,7 +38,27 @@ const AddEventModal: FC<AddEventModalProps> = ({
     isMultipleDays: false,
     sermonTopic: "",
     sermonNote: "",
+    location: [],
   });
+
+  useEffect(() => {
+    getLocations();
+  }, []);
+
+  const getLocations = () => {
+    // Call the function and log the users
+    getLocationsApi()
+      .then((response) => {
+        const locations: LocationSelect[] = response.data;
+        locations.forEach((item) => {
+          item.isChecked = false;
+        });
+        setAddEventForm({ ...addEventForm, location: locations });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   const handleIsMultipleDaysChange = () => {
     setAddEventForm({
@@ -73,6 +101,21 @@ const AddEventModal: FC<AddEventModalProps> = ({
     });
   };
 
+  const handleLocationSelect = (location: LocationSelect) => {
+    const locations = addEventForm.location;
+
+    if (locations) {
+      const indexToUpdate = locations?.findIndex((x) => x._id === location._id);
+
+      if (indexToUpdate !== -1) {
+        locations[indexToUpdate].isChecked =
+          !locations[indexToUpdate].isChecked;
+      }
+
+      setAddEventForm({ ...addEventForm, location: locations });
+    }
+  };
+
   const handleCloseModal = () => {
     closeModal();
   };
@@ -113,6 +156,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
               <span className="sr-only">Close modal</span>
             </button>
           </div>
+
           <div className="px-4 md:px-5 mt-6">
             {events.length > 0 && (
               <div>
@@ -124,6 +168,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
               </div>
             )}
           </div>
+
           <div className="px-4 md:px-5 mt-6">
             <Datepicker onSelect={handleDateSelect} />
             {addEventForm.isMultipleDays && (
@@ -171,6 +216,20 @@ const AddEventModal: FC<AddEventModalProps> = ({
               </div>
             </div>
           )}
+
+          <div className="px-4 md:px-5 mt-6">
+            <MultiSelect
+              value={
+                addEventForm?.location
+                  ?.filter((x) => x.isChecked)
+                  .map((x) => `${capitalizeFirstLetter(x.name)}`)
+                  .join(", ") || ""
+              }
+              placeholder="Select Locations"
+              data={addEventForm?.location || []}
+              onCheckboxClick={handleLocationSelect}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -70,9 +70,14 @@ const CreateRoster: FC<CreateRosterProps> = () => {
       });
   };
 
-  const createRoster = () => {
-    showModal();
+  const onAddEvent = (event: Event) => {
+    setSelectedEvents([...selectedEvents, event]);
   };
+
+  // const createRoster = () => {
+  //   showModal();
+  // };
+
   return (
     <div className="px-6 pt-6 md:px-8 md:pt-8 lg:px-10 lg:pt-10">
       <div className="mt-6">
@@ -179,6 +184,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         modalRef={modalRef}
         closeModal={closeModal}
         events={events}
+        handleAdd={onAddEvent}
       />
     </div>
   );

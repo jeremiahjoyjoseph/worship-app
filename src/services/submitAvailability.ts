@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
-import { RequiredDate, Roster } from "../interfaces/roster";
+import { Roster } from "../interfaces/roster";
 import { User } from "../interfaces/user";
 import axiosInstance from "./instance";
+import { Event } from "../interfaces/event";
 
 // Define the function to get all users
 export async function getAllUsers(): Promise<{
@@ -64,15 +65,15 @@ export async function getRoster(params: { [key: string]: string }): Promise<{
 // Define the function to get all users
 export async function submitAvailabilityApi(
   params: { [key: string]: string },
-  body: RequiredDate[]
+  body: Event[]
 ): Promise<{
-  data: RequiredDate[];
+  data: Event[];
   message: string;
   success: boolean;
 }> {
   try {
     const response: AxiosResponse<{
-      data: RequiredDate[];
+      data: Event[];
       message: string;
       success: boolean;
     }> = await axiosInstance.post(

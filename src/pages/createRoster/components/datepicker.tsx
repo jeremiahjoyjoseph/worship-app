@@ -19,6 +19,7 @@ const MyDatepicker: FC<MyDatepickerProps> = ({ onSelect, placeholder }) => {
       });
 
       // Optional: Handle the date selection event if needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       datepickerRef.current.addEventListener("changeDate", (event: any) => {
         onSelect(event.detail.date);
         // Perform any additional actions here

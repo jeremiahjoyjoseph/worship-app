@@ -73,6 +73,7 @@ const Search: React.FC<SearchProps> = ({ list, placeholder, onSelect }) => {
                 <li
                   onClick={() => handleSelect(listItem)}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  key={listItem._id}
                 >
                   {capitalizeFirstLetter(listItem.eventName)}
                 </li>
