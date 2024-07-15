@@ -6,6 +6,7 @@ import moment from "moment";
 import MultiSelect from "./multiSelect";
 import { getLocationsApi } from "../../../services/createRoster";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import { AddEventFormInterface } from "../../../interfaces/roster";
 
 interface AddEventModalProps {
   modalRef: RefObject<HTMLDivElement>;
@@ -18,19 +19,11 @@ export interface LocationSelect extends Location {
   isChecked?: boolean;
 }
 
-interface AddEventFormInterface {
-  eventDate: string;
-  isMultipleDays?: boolean;
-  eventEndDate?: string;
-  sermonTopic?: string;
-  sermonNote?: string;
-  location?: LocationSelect[];
-}
-
 const AddEventModal: FC<AddEventModalProps> = ({
   modalRef,
   events,
   closeModal,
+  handleAdd,
 }) => {
   const [selEvent, setSelEvent] = useState<Event>();
   const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
@@ -73,7 +66,6 @@ const AddEventModal: FC<AddEventModalProps> = ({
   };
 
   const handleDateSelect = (date: string) => {
-    console.log("date", moment(date).format("DD/MM/YYYY"));
     setAddEventForm({
       ...addEventForm,
       eventDate: moment(date).format("DD/MM/YYYY"),
@@ -118,6 +110,20 @@ const AddEventModal: FC<AddEventModalProps> = ({
 
   const handleCloseModal = () => {
     closeModal();
+  };
+
+  const handleAddEventClick = () => {
+    let event: Event = {
+      eventDate: addEventForm.eventDate,
+      eventName: selEvent?.eventName || "",
+      minAge: selEvent?.minAge,
+      maxAge: selEvent?.maxAge,
+      isSunday: selEvent?.isSunday || false,
+      sermonTopic: addEventForm.sermonTopic,
+      sermonNote: addEventForm.sermonNote,
+      location: addEventForm.location || [],
+    };
+    handleAdd(event);
   };
 
   return (
@@ -229,6 +235,15 @@ const AddEventModal: FC<AddEventModalProps> = ({
               data={addEventForm?.location || []}
               onCheckboxClick={handleLocationSelect}
             />
+          </div>
+          <div className="px-4 md:px-5 mt-6">
+            <button
+              type="button"
+              className="h-[50px] text-white bg-blue-700 hover:bg-blue-800 font-medium text-md px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full"
+              onClick={handleAddEventClick}
+            >
+              Add Event
+            </button>
           </div>
         </div>
       </div>

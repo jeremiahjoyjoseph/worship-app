@@ -1,3 +1,4 @@
+import { LocationSelect } from "../pages/createRoster/components/addEventModal";
 import { Event } from "./event";
 
 // Define the type for user data inside submissions
@@ -48,4 +49,13 @@ export interface Roster {
   updatedAt: string;
   __v: number;
   rosterUrl: string;
+}
+
+export interface AddEventFormInterface {
+  eventDate: string;
+  isMultipleDays?: boolean;
+  eventEndDate?: string;
+  sermonTopic?: string;
+  sermonNote?: string;
+  location?: LocationSelect[];
 }

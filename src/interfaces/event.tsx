@@ -1,5 +1,5 @@
 export interface Event {
-  _id: string;
+  _id?: string;
   eventDate: string;
   eventName: string;
   minAge?: number;
