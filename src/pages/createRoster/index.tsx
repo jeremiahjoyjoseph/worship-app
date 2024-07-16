@@ -2,8 +2,9 @@ import { Modal, ModalInterface, ModalOptions } from "flowbite";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Event } from "../../interfaces/event";
 import { getEventsApi } from "../../services/createRoster";
-import { capitalizeFirstLetter } from "../../util/helperFunctions";
 import AddEventModal from "./components/addEventModal";
+import EventCard from "./components/eventCard";
+import { AddEventFormInterface } from "../../interfaces/roster";
 
 interface CreateRosterProps {}
 
@@ -23,6 +24,13 @@ const modalInstanceOptions = {
 const CreateRoster: FC<CreateRosterProps> = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
+  const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
+    eventDate: "",
+    isMultipleDays: false,
+    sermonTopic: "",
+    sermonNote: "",
+    location: [],
+  });
 
   const modalRef = useRef(null);
   let modal: ModalInterface;
@@ -63,7 +71,19 @@ const CreateRoster: FC<CreateRosterProps> = () => {
 
   const onAddEvent = (event: Event) => {
     setSelectedEvents([...selectedEvents, event]);
+    setAddEventForm({
+      eventDate: "",
+      isMultipleDays: false,
+      sermonTopic: "",
+      sermonNote: "",
+      location: [],
+    });
     closeModal();
+  };
+
+  const removeEvent = (event: Event) => {
+    const events = selectedEvents.filter((x) => x._id !== event._id);
+    setSelectedEvents(events);
   };
 
   return (
@@ -147,16 +167,12 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         <div className="flex flex-col gap-4 mt-8">
           {selectedEvents &&
             selectedEvents.map((event) => (
-              <div
-                className="flex items-center gap-6 ps-4 border border-gray-200 rounded dark:border-gray-700 p-4"
+              <EventCard
                 key={event._id}
-              >
-                <div>
-                  <h5 className="text-1xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {capitalizeFirstLetter(event.eventName)}
-                  </h5>
-                </div>
-              </div>
+                event={event}
+                allEvents={events}
+                removeEvent={removeEvent}
+              />
             ))}
         </div>
       </div>
@@ -173,6 +189,8 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         closeModal={closeModal}
         events={events}
         handleAdd={onAddEvent}
+        addEventForm={addEventForm}
+        setAddEventForm={setAddEventForm}
       />
     </div>
   );

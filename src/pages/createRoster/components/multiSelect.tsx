@@ -1,11 +1,13 @@
 import { FC, useState } from "react";
 import { LocationSelect } from "./addEventModal";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import { Location } from "../../../interfaces/event";
 
 interface MultiSelectProps {
   value: string;
   placeholder: string;
-  data: LocationSelect[];
+  data: Location[];
+  selectedData?: Location[];
   onCheckboxClick: (param1: LocationSelect) => void;
 }
 
@@ -13,6 +15,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
   value,
   placeholder,
   data,
+  selectedData,
   onCheckboxClick,
 }) => {
   const [dropdownIsOpen, setDropdownIsOpen] = useState<boolean>(false);
@@ -35,7 +38,11 @@ const MultiSelect: FC<MultiSelectProps> = ({
                     <input
                       id="checkbox-item-1"
                       type="checkbox"
-                      checked={item.isChecked ? true : false}
+                      checked={
+                        selectedData?.find((x) => x._id === item._id)
+                          ? true
+                          : false
+                      }
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                     />
                     <label

@@ -12,7 +12,10 @@ interface AddEventModalProps {
   modalRef: RefObject<HTMLDivElement>;
   closeModal: () => void;
   events: Event[];
-  handleAdd: (param1: Event) => void;
+  isEdit?: boolean;
+  handleAdd?: (param1: Event) => void;
+  addEventForm: AddEventFormInterface;
+  setAddEventForm: React.Dispatch<React.SetStateAction<AddEventFormInterface>>;
 }
 
 export interface LocationSelect extends Location {
@@ -24,15 +27,12 @@ const AddEventModal: FC<AddEventModalProps> = ({
   events,
   closeModal,
   handleAdd,
+  addEventForm,
+  setAddEventForm,
+  isEdit,
 }) => {
   const [selEvent, setSelEvent] = useState<Event>();
-  const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
-    eventDate: "",
-    isMultipleDays: false,
-    sermonTopic: "",
-    sermonNote: "",
-    location: [],
-  });
+  const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
     getLocations();
@@ -42,11 +42,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
     // Call the function and log the users
     getLocationsApi()
       .then((response) => {
-        const locations: LocationSelect[] = response.data;
-        locations.forEach((item) => {
-          item.isChecked = false;
-        });
-        setAddEventForm({ ...addEventForm, location: locations });
+        setLocations(response.data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -93,19 +89,17 @@ const AddEventModal: FC<AddEventModalProps> = ({
     });
   };
 
-  const handleLocationSelect = (location: LocationSelect) => {
-    const locations = addEventForm.location;
-
-    if (locations) {
-      const indexToUpdate = locations?.findIndex((x) => x._id === location._id);
-
-      if (indexToUpdate !== -1) {
-        locations[indexToUpdate].isChecked =
-          !locations[indexToUpdate].isChecked;
-      }
-
-      setAddEventForm({ ...addEventForm, location: locations });
+  const handleLocationSelect = (checkedLocation: Location) => {
+    let selectedLocations = [];
+    if (addEventForm.location?.find((x) => x._id === checkedLocation._id)) {
+      selectedLocations = addEventForm.location.filter(
+        (x) => x._id !== checkedLocation._id
+      );
+    } else {
+      selectedLocations = addEventForm?.location || [];
+      selectedLocations?.push(checkedLocation);
     }
+    setAddEventForm({ ...addEventForm, location: selectedLocations });
   };
 
   const handleCloseModal = () => {
@@ -113,7 +107,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
   };
 
   const handleAddEventClick = () => {
-    let event: Event = {
+    const event: Event = {
       eventDate: addEventForm.eventDate,
       eventName: selEvent?.eventName || "",
       minAge: selEvent?.minAge,
@@ -123,7 +117,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
       sermonNote: addEventForm.sermonNote,
       location: addEventForm.location || [],
     };
-    handleAdd(event);
+    handleAdd && handleAdd(event);
   };
 
   return (
@@ -223,26 +217,29 @@ const AddEventModal: FC<AddEventModalProps> = ({
             </div>
           )}
 
-          <div className="px-4 md:px-5 mt-6">
-            <MultiSelect
-              value={
-                addEventForm?.location
-                  ?.filter((x) => x.isChecked)
-                  .map((x) => `${capitalizeFirstLetter(x.name)}`)
-                  .join(", ") || ""
-              }
-              placeholder="Select Locations"
-              data={addEventForm?.location || []}
-              onCheckboxClick={handleLocationSelect}
-            />
-          </div>
+          {selEvent && (
+            <div className="px-4 md:px-5 mt-6">
+              <MultiSelect
+                value={
+                  addEventForm?.location
+                    ?.map((x) => `${capitalizeFirstLetter(x.name)}`)
+                    .join(", ") || ""
+                }
+                placeholder="Select Locations"
+                data={locations || []}
+                selectedData={addEventForm.location}
+                onCheckboxClick={handleLocationSelect}
+              />
+            </div>
+          )}
+
           <div className="px-4 md:px-5 mt-6">
             <button
               type="button"
               className="h-[50px] text-white bg-blue-700 hover:bg-blue-800 font-medium text-md px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full"
               onClick={handleAddEventClick}
             >
-              Add Event
+              {isEdit ? "Update Event" : "Add Event"}
             </button>
           </div>
         </div>

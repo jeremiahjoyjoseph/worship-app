@@ -1,6 +1,7 @@
 export interface Event {
   _id?: string;
   eventDate: string;
+  eventEndDate?: string;
   eventName: string;
   minAge?: number;
   maxAge?: number;
