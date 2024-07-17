@@ -1,10 +1,10 @@
 import { Modal, ModalInterface, ModalOptions } from "flowbite";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Event, Location } from "../../interfaces/event";
+import { AddEventFormInterface } from "../../interfaces/roster";
 import { getEventsApi, getLocationsApi } from "../../services/createRoster";
 import AddEventModal from "./components/addEventModal";
 import EventCard from "./components/eventCard";
-import { AddEventFormInterface } from "../../interfaces/roster";
 
 interface CreateRosterProps {}
 

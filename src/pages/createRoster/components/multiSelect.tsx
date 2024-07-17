@@ -33,7 +33,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
           <ul className="px-2 py-4 text-sm text-gray-700 dark:text-gray-200 align-left flex flex-col gap-4">
             {data &&
               data.map((item) => (
-                <li onClick={() => onCheckboxClick(item)}>
+                <li onClick={() => onCheckboxClick(item)} key={item._id}>
                   <div className="flex items-center">
                     <input
                       id="checkbox-item-1"
@@ -43,6 +43,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
                           ? true
                           : false
                       }
+                      onChange={() => onCheckboxClick(item)}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                     />
                     <label

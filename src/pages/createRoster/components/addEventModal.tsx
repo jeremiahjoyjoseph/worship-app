@@ -48,31 +48,31 @@ const AddEventModal: FC<AddEventModalProps> = ({
   };
 
   const handleDateSelect = (date: string) => {
-    setAddEventForm({
-      ...addEventForm,
+    setAddEventForm((form) => ({
+      ...form,
       eventDate: moment(date).format("DD/MM/YYYY"),
-    });
+    }));
   };
 
   const handleEndDateSelect = (date: string) => {
-    setAddEventForm({
-      ...addEventForm,
+    setAddEventForm((form) => ({
+      ...form,
       eventEndDate: moment(date).format("DD/MM/YYYY"),
-    });
+    }));
   };
 
   const handleSermonTopicChange = (topic: string) => {
-    setAddEventForm({
-      ...addEventForm,
+    setAddEventForm((form) => ({
+      ...form,
       sermonTopic: topic,
-    });
+    }));
   };
 
   const handleSermonNoteChange = (note: string) => {
-    setAddEventForm({
-      ...addEventForm,
+    setAddEventForm((form) => ({
+      ...form,
       sermonNote: note,
-    });
+    }));
   };
 
   const handleLocationSelect = (checkedLocation: Location) => {
