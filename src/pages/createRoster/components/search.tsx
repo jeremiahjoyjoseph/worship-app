@@ -6,10 +6,18 @@ interface SearchProps {
   list: Event[];
   placeholder?: string;
   onSelect: (param1: Event) => void;
+  defaultSelected?: Event;
 }
 
-const Search: React.FC<SearchProps> = ({ list, placeholder, onSelect }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
+const Search: React.FC<SearchProps> = ({
+  list,
+  placeholder,
+  onSelect,
+  defaultSelected,
+}) => {
+  const [searchTerm, setSearchTerm] = useState<string>(
+    defaultSelected?.eventName || ""
+  );
   const [filteredOptions, setFilteredOptions] = useState<Event[]>(list);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 

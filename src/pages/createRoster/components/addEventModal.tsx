@@ -1,21 +1,23 @@
-import { FC, RefObject, useEffect, useState } from "react";
-import { Event, Location } from "../../../interfaces/event";
-import Search from "./search";
-import Datepicker from "./datepicker";
 import moment from "moment";
-import MultiSelect from "./multiSelect";
-import { getLocationsApi } from "../../../services/createRoster";
-import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import { FC, RefObject } from "react";
+import { Event, Location } from "../../../interfaces/event";
 import { AddEventFormInterface } from "../../../interfaces/roster";
+import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import Datepicker from "./datepicker";
+import MultiSelect from "./multiSelect";
+import Search from "./search";
 
 interface AddEventModalProps {
   modalRef: RefObject<HTMLDivElement>;
   closeModal: () => void;
   events: Event[];
+  selectedEvent: Event | undefined;
+  setSelectedEvent: React.Dispatch<React.SetStateAction<Event | undefined>>;
   isEdit?: boolean;
   handleAdd?: (param1: Event) => void;
   addEventForm: AddEventFormInterface;
   setAddEventForm: React.Dispatch<React.SetStateAction<AddEventFormInterface>>;
+  locations: Location[];
 }
 
 export interface LocationSelect extends Location {
@@ -30,25 +32,10 @@ const AddEventModal: FC<AddEventModalProps> = ({
   addEventForm,
   setAddEventForm,
   isEdit,
+  selectedEvent,
+  setSelectedEvent,
+  locations,
 }) => {
-  const [selEvent, setSelEvent] = useState<Event>();
-  const [locations, setLocations] = useState<Location[]>([]);
-
-  useEffect(() => {
-    getLocations();
-  }, []);
-
-  const getLocations = () => {
-    // Call the function and log the users
-    getLocationsApi()
-      .then((response) => {
-        setLocations(response.data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
-
   const handleIsMultipleDaysChange = () => {
     setAddEventForm({
       ...addEventForm,
@@ -57,8 +44,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
   };
 
   const onSearchSelect = (event: Event) => {
-    // setSelectedEvents([...selectedEvents, event]);
-    setSelEvent(event);
+    setSelectedEvent(event);
   };
 
   const handleDateSelect = (date: string) => {
@@ -109,10 +95,10 @@ const AddEventModal: FC<AddEventModalProps> = ({
   const handleAddEventClick = () => {
     const event: Event = {
       eventDate: addEventForm.eventDate,
-      eventName: selEvent?.eventName || "",
-      minAge: selEvent?.minAge,
-      maxAge: selEvent?.maxAge,
-      isSunday: selEvent?.isSunday || false,
+      eventName: selectedEvent?.eventName || "",
+      minAge: selectedEvent?.minAge,
+      maxAge: selectedEvent?.maxAge,
+      isSunday: selectedEvent?.isSunday || false,
       sermonTopic: addEventForm.sermonTopic,
       sermonNote: addEventForm.sermonNote,
       location: addEventForm.location || [],
@@ -161,7 +147,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
             {events.length > 0 && (
               <div>
                 <Search
-                  placeholder="Add event"
+                  placeholder={selectedEvent?.eventName || "Add event"}
                   list={events}
                   onSelect={onSearchSelect}
                 />
@@ -170,7 +156,10 @@ const AddEventModal: FC<AddEventModalProps> = ({
           </div>
 
           <div className="px-4 md:px-5 mt-6">
-            <Datepicker onSelect={handleDateSelect} />
+            <Datepicker
+              onSelect={handleDateSelect}
+              placeholder={addEventForm.eventDate || ""}
+            />
             {addEventForm.isMultipleDays && (
               <div className="mt-4">
                 <Datepicker
@@ -194,7 +183,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
             </label>
           </div>
 
-          {selEvent?.isSunday && (
+          {selectedEvent?.isSunday && (
             <div className="px-4 md:px-5 mt-6">
               <input
                 type={"text"}
@@ -217,7 +206,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
             </div>
           )}
 
-          {selEvent && (
+          {selectedEvent && (
             <div className="px-4 md:px-5 mt-6">
               <MultiSelect
                 value={

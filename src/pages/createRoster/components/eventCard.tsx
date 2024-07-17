@@ -1,14 +1,16 @@
 import { Modal, ModalInterface, ModalOptions } from "flowbite";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
-import { Event } from "../../../interfaces/event";
+import { Event, Location } from "../../../interfaces/event";
 import AddEventModal from "./addEventModal";
 import { AddEventFormInterface } from "../../../interfaces/roster";
 
 interface EventCardProps {
   event: Event;
   allEvents: Event[];
+  allLocations: Location[];
   removeEvent: (param1: Event) => void;
+  updateEvent: (param1: Event) => void;
 }
 
 const modalOptions: ModalOptions = {
@@ -24,7 +26,14 @@ const modalInstanceOptions = {
   override: true,
 };
 
-const EventCard: FC<EventCardProps> = ({ event, allEvents, removeEvent }) => {
+const EventCard: FC<EventCardProps> = ({
+  event,
+  allEvents,
+  removeEvent,
+  allLocations,
+  updateEvent,
+}) => {
+  const [selectedEvent, setSelectedEvent] = useState<Event>();
   const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
     eventDate: "",
     eventEndDate: "",
@@ -59,11 +68,32 @@ const EventCard: FC<EventCardProps> = ({ event, allEvents, removeEvent }) => {
         sermonNote: event.sermonNote,
         location: event.location,
       });
+      setSelectedEvent(allEvents.find((x) => x.eventName === event.eventName));
       modal.show();
     }
   }, [modalRef]);
 
-  const handleUpdate = () => {};
+  const handleUpdate = () => {
+    const newEvent = {
+      eventDate: addEventForm.eventDate,
+      eventName: selectedEvent?.eventName || "",
+      minAge: selectedEvent?.minAge,
+      maxAge: selectedEvent?.maxAge,
+      isSunday: selectedEvent?.isSunday || false,
+      sermonTopic: addEventForm.sermonTopic,
+      sermonNote: addEventForm.sermonNote,
+      location: addEventForm.location || [],
+    };
+    setAddEventForm({
+      eventDate: "",
+      isMultipleDays: false,
+      sermonTopic: "",
+      sermonNote: "",
+      location: [],
+    });
+    updateEvent && updateEvent(newEvent);
+    closeModal();
+  };
 
   return (
     <div className="flex flex-col items-left gap-6 ps-4 border border-gray-200 rounded dark:border-gray-700 p-4">
@@ -126,6 +156,9 @@ const EventCard: FC<EventCardProps> = ({ event, allEvents, removeEvent }) => {
         isEdit={true}
         addEventForm={addEventForm}
         setAddEventForm={setAddEventForm}
+        selectedEvent={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        locations={allLocations}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { Modal, ModalInterface, ModalOptions } from "flowbite";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
-import { Event } from "../../interfaces/event";
-import { getEventsApi } from "../../services/createRoster";
+import { Event, Location } from "../../interfaces/event";
+import { getEventsApi, getLocationsApi } from "../../services/createRoster";
 import AddEventModal from "./components/addEventModal";
 import EventCard from "./components/eventCard";
 import { AddEventFormInterface } from "../../interfaces/roster";
@@ -23,6 +23,8 @@ const modalInstanceOptions = {
 
 const CreateRoster: FC<CreateRosterProps> = () => {
   const [events, setEvents] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<Event>();
+  const [locations, setLocations] = useState<Location[]>([]);
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
     eventDate: "",
@@ -38,6 +40,21 @@ const CreateRoster: FC<CreateRosterProps> = () => {
   useEffect(() => {
     getEvents();
   }, []);
+
+  useEffect(() => {
+    getLocations();
+  }, []);
+
+  const getLocations = () => {
+    // Call the function and log the users
+    getLocationsApi()
+      .then((response) => {
+        setLocations(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   useEffect(() => {
     if (modalRef.current) {
@@ -84,6 +101,20 @@ const CreateRoster: FC<CreateRosterProps> = () => {
   const removeEvent = (event: Event) => {
     const events = selectedEvents.filter((x) => x._id !== event._id);
     setSelectedEvents(events);
+  };
+
+  const updateEvent = (event: Event) => {
+    const newSelectedEvents = selectedEvents;
+    newSelectedEvents.forEach((x) => {
+      if (x._id !== event._id) {
+        x = event;
+      }
+    });
+    setSelectedEvents(newSelectedEvents);
+  };
+
+  const handleCreateRoster = () => {
+    console.log("create roster", selectedEvents);
   };
 
   return (
@@ -171,7 +202,9 @@ const CreateRoster: FC<CreateRosterProps> = () => {
                 key={event._id}
                 event={event}
                 allEvents={events}
+                allLocations={locations}
                 removeEvent={removeEvent}
+                updateEvent={updateEvent}
               />
             ))}
         </div>
@@ -180,18 +213,24 @@ const CreateRoster: FC<CreateRosterProps> = () => {
       <button
         type="button"
         className="h-[50px] text-white bg-blue-700 hover:bg-blue-800 font-medium text-md px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 fixed bottom-0 left-0 w-full"
+        onClick={handleCreateRoster}
       >
         Create Roster
       </button>
 
-      <AddEventModal
-        modalRef={modalRef}
-        closeModal={closeModal}
-        events={events}
-        handleAdd={onAddEvent}
-        addEventForm={addEventForm}
-        setAddEventForm={setAddEventForm}
-      />
+      {locations && events && (
+        <AddEventModal
+          modalRef={modalRef}
+          closeModal={closeModal}
+          events={events}
+          handleAdd={onAddEvent}
+          addEventForm={addEventForm}
+          setAddEventForm={setAddEventForm}
+          selectedEvent={selectedEvent}
+          setSelectedEvent={setSelectedEvent}
+          locations={locations}
+        />
+      )}
     </div>
   );
 };
