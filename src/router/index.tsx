@@ -5,13 +5,15 @@ import SubmitAvailability from "../pages/submitAvailability";
 import SelectDates from "../pages/submitAvailability/pages/selectDates";
 import ThankYou from "../pages/submitAvailability/pages/thankYou";
 import CreateRoster from "../pages/createRoster";
+import AllRosters from "../pages/allRosters";
 
 const AppRouter: FC = () => {
   return (
     <Routes>
       <Route path="/" element={<DashboardPage />} index />
 
-      <Route path="/create/roster" element={<CreateRoster />} index />
+      <Route path="/roster/create" element={<CreateRoster />} index />
+      <Route path="/roster/all" element={<AllRosters />} index />
 
       <Route
         path="/submit/availability/:rosterId"

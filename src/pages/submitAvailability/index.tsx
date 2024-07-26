@@ -1,7 +1,7 @@
 import { useEffect, useState, type FC } from "react";
 import { useParams } from "react-router-dom";
 import { User } from "../../interfaces/user";
-import { getAllUsers } from "../../services/submitAvailability";
+import { getAllUsers } from "../../services/availability";
 import Search from "./components/search";
 
 const SubmitAvailability: FC = function () {

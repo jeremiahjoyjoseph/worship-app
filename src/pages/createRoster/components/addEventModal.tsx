@@ -159,6 +159,7 @@ const AddEventModal: FC<AddEventModalProps> = ({
             <Datepicker
               onSelect={handleDateSelect}
               placeholder={addEventForm.eventDate || ""}
+              disabled={isEdit ? true : false}
             />
             {addEventForm.isMultipleDays && (
               <div className="mt-4">

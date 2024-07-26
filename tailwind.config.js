@@ -1,6 +1,5 @@
+import flowbite from "flowbite-react/tailwind";
 /** @type {import('tailwindcss').Config} */
-
-import flowbitePlugin from "flowbite/plugin";
 
 export default {
   darkMode: "class",
@@ -9,9 +8,10 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/flowbite/**/*.js",
     "node_modules/flowbite-react/lib/esm/**/*.js",
+    flowbite.content(),
   ],
   theme: {
     extend: {},
   },
-  plugins: [flowbitePlugin],
+  plugins: [flowbite.plugin()],
 };

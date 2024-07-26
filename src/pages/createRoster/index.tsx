@@ -1,29 +1,12 @@
-import { Modal, ModalInterface, ModalOptions } from "flowbite";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Event, Location } from "../../interfaces/event";
 import { AddEventFormInterface } from "../../interfaces/roster";
-import {
-  createRosterApi,
-  getEventsApi,
-  getLocationsApi,
-} from "../../services/createRoster";
-import AddEventModal from "./components/addEventModal";
+import { getLocationsApi } from "../../services/location";
+import { createRosterApi, getEventsApi } from "../../services/roster";
 import EventCard from "./components/eventCard";
+import { EventSideDrawer } from "./components/eventSideDrawer";
 
 interface CreateRosterProps {}
-
-const modalOptions: ModalOptions = {
-  placement: "center",
-  backdrop: "dynamic",
-  backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-20",
-  closable: true,
-};
-
-// instance options object
-const modalInstanceOptions = {
-  id: "create_event_modal",
-  override: true,
-};
 
 const CreateRoster: FC<CreateRosterProps> = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -38,8 +21,10 @@ const CreateRoster: FC<CreateRosterProps> = () => {
     location: [],
   });
 
-  const modalRef = useRef(null);
-  let modal: ModalInterface;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => setIsDrawerOpen(false);
 
   useEffect(() => {
     getEvents();
@@ -59,25 +44,6 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         console.error("Error:", error);
       });
   };
-
-  useEffect(() => {
-    if (modalRef.current) {
-      modal = new Modal(modalRef.current, modalOptions, modalInstanceOptions);
-      modal.hide();
-    }
-  }, [modalRef]);
-
-  const closeModal = useCallback(() => {
-    if (modalRef.current) {
-      modal.hide();
-    }
-  }, [modalRef]);
-
-  const showModal = useCallback(() => {
-    if (modalRef.current) {
-      modal.show();
-    }
-  }, [modalRef]);
 
   const getEvents = () => {
     // Call the function and log the users
@@ -99,19 +65,21 @@ const CreateRoster: FC<CreateRosterProps> = () => {
       sermonNote: "",
       location: [],
     });
-    closeModal();
+    closeDrawer();
   };
 
   const removeEvent = (event: Event) => {
-    const events = selectedEvents.filter((x) => x._id !== event._id);
-    setSelectedEvents(events);
+    const updatedEvents = selectedEvents.filter(
+      (x) => x.eventDate !== event.eventDate
+    );
+    setSelectedEvents(updatedEvents);
   };
 
   const updateEvent = (event: Event) => {
     const newSelectedEvents = selectedEvents;
     newSelectedEvents.forEach((x) => {
-      if (x._id !== event._id) {
-        x = event;
+      if (x.eventDate === event.eventDate) {
+        Object.assign(x, event);
       }
     });
     setSelectedEvents(newSelectedEvents);
@@ -182,7 +150,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         <button
           type="button"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={showModal}
+          onClick={openDrawer}
         >
           <svg
             className="w-6 h-6 text-white-800 dark:text-white"
@@ -229,16 +197,17 @@ const CreateRoster: FC<CreateRosterProps> = () => {
       </button>
 
       {locations && events && (
-        <AddEventModal
-          modalRef={modalRef}
-          closeModal={closeModal}
+        <EventSideDrawer
+          isOpen={isDrawerOpen}
+          onClose={closeDrawer}
           events={events}
-          handleAdd={onAddEvent}
+          handleClick={onAddEvent}
           addEventForm={addEventForm}
           setAddEventForm={setAddEventForm}
           selectedEvent={selectedEvent}
           setSelectedEvent={setSelectedEvent}
           locations={locations}
+          title="Add Event"
         />
       )}
     </div>

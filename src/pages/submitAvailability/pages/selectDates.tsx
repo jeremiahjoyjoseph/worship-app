@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   getRoster,
   submitAvailabilityApi,
-} from "../../../services/submitAvailability";
+} from "../../../services/availability";
 
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
 import { Event } from "../../../interfaces/event";
