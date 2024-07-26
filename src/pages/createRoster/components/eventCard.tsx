@@ -1,9 +1,8 @@
-import { Modal, ModalInterface, ModalOptions } from "flowbite";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
-import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import { FC, useState } from "react";
 import { Event, Location } from "../../../interfaces/event";
-import AddEventModal from "./addEventModal";
 import { AddEventFormInterface } from "../../../interfaces/roster";
+import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import { EventSideDrawer } from "./eventSideDrawer";
 
 interface EventCardProps {
   event: Event;
@@ -12,19 +11,6 @@ interface EventCardProps {
   removeEvent: (param1: Event) => void;
   updateEvent: (param1: Event) => void;
 }
-
-const modalOptions: ModalOptions = {
-  placement: "center",
-  backdrop: "dynamic",
-  backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-20",
-  closable: true,
-};
-
-// instance options object
-const modalInstanceOptions = {
-  id: "create_event_modal",
-  override: true,
-};
 
 const EventCard: FC<EventCardProps> = ({
   event,
@@ -43,35 +29,22 @@ const EventCard: FC<EventCardProps> = ({
     location: [],
   });
 
-  const modalRef = useRef(null);
-  let modal: ModalInterface;
-  useEffect(() => {
-    if (modalRef.current) {
-      modal = new Modal(modalRef.current, modalOptions, modalInstanceOptions);
-      modal.hide();
-    }
-  }, [modalRef]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const closeModal = useCallback(() => {
-    if (modalRef.current) {
-      modal.hide();
-    }
-  }, [modalRef]);
+  const openDrawer = () => {
+    setAddEventForm({
+      eventDate: event.eventDate,
+      isMultipleDays: event.eventEndDate ? true : false,
+      eventEndDate: event.eventEndDate,
+      sermonTopic: event.sermonTopic,
+      sermonNote: event.sermonNote,
+      location: event.location,
+    });
+    setSelectedEvent(allEvents.find((x) => x.eventName === event.eventName));
+    setIsDrawerOpen(true);
+  };
 
-  const showModal = useCallback(() => {
-    if (modalRef.current) {
-      setAddEventForm({
-        eventDate: event.eventDate,
-        isMultipleDays: event.eventEndDate ? true : false,
-        eventEndDate: event.eventEndDate,
-        sermonTopic: event.sermonTopic,
-        sermonNote: event.sermonNote,
-        location: event.location,
-      });
-      setSelectedEvent(allEvents.find((x) => x.eventName === event.eventName));
-      modal.show();
-    }
-  }, [modalRef]);
+  const closeDrawer = () => setIsDrawerOpen(false);
 
   const handleUpdate = () => {
     const newEvent = {
@@ -92,7 +65,7 @@ const EventCard: FC<EventCardProps> = ({
       location: [],
     });
     updateEvent && updateEvent(newEvent);
-    closeModal();
+    closeDrawer();
   };
 
   return (
@@ -110,7 +83,7 @@ const EventCard: FC<EventCardProps> = ({
           {event.eventDate}
         </p>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-4">
         <svg
           className="w-6 h-6 text-gray-800 dark:text-white"
           aria-hidden="true"
@@ -119,7 +92,7 @@ const EventCard: FC<EventCardProps> = ({
           height="24"
           fill="none"
           viewBox="0 0 24 24"
-          onClick={showModal}
+          onClick={openDrawer}
         >
           <path
             stroke="currentColor"
@@ -148,17 +121,18 @@ const EventCard: FC<EventCardProps> = ({
           />
         </svg>
       </div>
-      <AddEventModal
-        modalRef={modalRef}
-        closeModal={closeModal}
+      <EventSideDrawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
         events={allEvents}
-        handleAdd={handleUpdate}
+        handleClick={handleUpdate}
         isEdit={true}
         addEventForm={addEventForm}
         setAddEventForm={setAddEventForm}
         selectedEvent={selectedEvent}
         setSelectedEvent={setSelectedEvent}
         locations={allLocations}
+        title="Any changes?"
       />
     </div>
   );

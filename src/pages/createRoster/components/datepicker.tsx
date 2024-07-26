@@ -18,7 +18,7 @@ const MyDatepicker: FC<MyDatepickerProps> = ({
 
     if (datepickerRef.current) {
       // Initialize the datepicker with the autoHide option set to true
-      datepickerInstance = new window.Datepicker(datepickerRef.current, {
+      datepickerInstance = new Datepicker(datepickerRef.current, {
         format: "dd-mm-yyyy",
         autohide: true, // This option hides the datepicker after selecting a date
       });

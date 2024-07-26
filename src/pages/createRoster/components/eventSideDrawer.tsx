@@ -5,7 +5,7 @@ import { Event, Location } from "../../../interfaces/event";
 import { AddEventFormInterface } from "../../../interfaces/roster";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
 import { useDeviceQueries } from "../../../util/useDeviceQueries";
-import Datepicker from "./datepicker";
+// import Datepicker from "./datepicker";
 import MultiSelect from "./multiSelect";
 import Search from "./search";
 
@@ -124,7 +124,7 @@ export function EventSideDrawer({
         )}
       </div>
 
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <Datepicker
           onSelect={handleDateSelect}
           placeholder={addEventForm.eventDate || ""}
@@ -151,7 +151,7 @@ export function EventSideDrawer({
             Multiple Days
           </span>
         </label>
-      </div>
+      </div> */}
 
       {selectedEvent?.isSunday && (
         <div className="mt-6">

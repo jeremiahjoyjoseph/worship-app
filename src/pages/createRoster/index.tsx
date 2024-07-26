@@ -1,10 +1,12 @@
 import { FC, useEffect, useState } from "react";
+import PrimaryButton from "../../components/molecule/PrimaryButton";
 import { Event, Location } from "../../interfaces/event";
 import { AddEventFormInterface } from "../../interfaces/roster";
 import { getLocationsApi } from "../../services/location";
 import { createRosterApi, getEventsApi } from "../../services/roster";
 import EventCard from "./components/eventCard";
 import { EventSideDrawer } from "./components/eventSideDrawer";
+import SecondaryButton from "../../components/molecule/SecondaryButton";
 
 interface CreateRosterProps {}
 
@@ -146,12 +148,17 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         </nav>
       </div>
 
+      <div className="mt-6">
+        <h2 className="text-4xl font-extrabold dark:text-white">
+          Create Roster
+        </h2>
+        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400 mt-2">
+          Set the dates and give the roster a name to get started!
+        </p>
+      </div>
+
       <div className="text-left mt-8">
-        <button
-          type="button"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={openDrawer}
-        >
+        <SecondaryButton onClick={openDrawer} fullWidth={false}>
           <svg
             className="w-6 h-6 text-white-800 dark:text-white"
             aria-hidden="true"
@@ -170,7 +177,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
             />
           </svg>
           Add Event
-        </button>
+        </SecondaryButton>
       </div>
       <div className="mt-8">
         <div className="flex flex-col gap-4 mt-8">
@@ -188,13 +195,12 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         </div>
       </div>
 
-      <button
-        type="button"
-        className="h-[50px] text-white bg-blue-700 hover:bg-blue-800 font-medium text-md px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 fixed bottom-0 left-0 w-full"
+      <PrimaryButton
+        additionalClasses="fixed bottom-0 left-0 w-full"
         onClick={handleCreateRoster}
       >
-        Create Roster
-      </button>
+        Let's get going!
+      </PrimaryButton>
 
       {locations && events && (
         <EventSideDrawer
@@ -207,7 +213,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
           selectedEvent={selectedEvent}
           setSelectedEvent={setSelectedEvent}
           locations={locations}
-          title="Add Event"
+          title="With passion and purpose"
         />
       )}
     </div>
