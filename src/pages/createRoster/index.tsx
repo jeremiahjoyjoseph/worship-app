@@ -2,7 +2,11 @@ import { Modal, ModalInterface, ModalOptions } from "flowbite";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Event, Location } from "../../interfaces/event";
 import { AddEventFormInterface } from "../../interfaces/roster";
-import { getEventsApi, getLocationsApi } from "../../services/createRoster";
+import {
+  createRosterApi,
+  getEventsApi,
+  getLocationsApi,
+} from "../../services/createRoster";
 import AddEventModal from "./components/addEventModal";
 import EventCard from "./components/eventCard";
 
@@ -114,7 +118,13 @@ const CreateRoster: FC<CreateRosterProps> = () => {
   };
 
   const handleCreateRoster = () => {
-    console.log("create roster", selectedEvents);
+    createRosterApi(selectedEvents)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   return (

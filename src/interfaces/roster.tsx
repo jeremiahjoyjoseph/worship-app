@@ -1,5 +1,5 @@
 import { LocationSelect } from "../pages/createRoster/components/addEventModal";
-import { Event } from "./event";
+import { Event, Location } from "./event";
 
 // Define the type for user data inside submissions
 export interface UserData {
@@ -41,10 +41,14 @@ export interface Submission {
 // Define the main type for the provided JSON structure
 export interface Roster {
   _id: string;
-  month: string; // Month format should be MM/YYYY
   requiredDates: Event[];
   submissions: Submission[];
-  roster: any[]; // Assuming roster can be an array of any type, could be refined based on additional details
+  roster: [
+    {
+      location: Location;
+      worshipTeam: Member;
+    }
+  ]; // Assuming roster can be an array of any type, could be refined based on additional details
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -58,4 +62,12 @@ export interface AddEventFormInterface {
   sermonTopic?: string;
   sermonNote?: string;
   location?: LocationSelect[];
+}
+
+export interface Member {
+  id: string;
+  name: string;
+  wtPrimaryRole: string;
+  wtSecondaryRole: string;
+  isMd: boolean;
 }

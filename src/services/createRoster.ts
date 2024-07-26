@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { Event, Location } from "../interfaces/event";
 import axiosInstance from "./instance";
+import { Roster } from "../interfaces/roster";
 
-// Define the function to get all users
 export async function getEventsApi(): Promise<{
   data: Event[];
   success: boolean;
@@ -29,7 +29,6 @@ export async function getEventsApi(): Promise<{
   }
 }
 
-// Define the function to get all users
 export async function getLocationsApi(): Promise<{
   data: Location[];
   success: boolean;
@@ -51,6 +50,34 @@ export async function getLocationsApi(): Promise<{
       throw new Error(error.message);
     } else {
       // Handle unexpected errors that don't match AxiosError or Error
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+}
+
+export async function createRosterApi(requiredDates: Event[]): Promise<{
+  data: Roster;
+  success: boolean;
+  message: string;
+}> {
+  try {
+    const response: AxiosResponse<{
+      data: Roster;
+      success: boolean;
+      message: string;
+    }> = await axiosInstance.post("/roster/generate", {
+      requiredDates,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.message ||
+          "An error occurred while fetching vehicle notifications."
+      );
+    } else if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
       throw new Error("An unexpected error occurred.");
     }
   }
