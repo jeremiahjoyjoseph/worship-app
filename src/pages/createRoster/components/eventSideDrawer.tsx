@@ -1,13 +1,17 @@
 import moment from "moment";
-import CustomButton from "../../../components/atom/CustomButton";
 import { CustomDrawer } from "../../../components/organism/CustomDrawer";
-import { Event, Location } from "../../../interfaces/event";
+import { Event } from "../../../interfaces/event";
 import { AddEventFormInterface } from "../../../interfaces/roster";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
 import { useDeviceQueries } from "../../../util/useDeviceQueries";
 // import Datepicker from "./datepicker";
+import PrimaryButton from "../../../components/molecule/PrimaryButton";
 import MultiSelect from "./multiSelect";
-import Search from "./search";
+import MyDatepicker from "../../../components/organism/Datepicker";
+import { Location } from "../../../interfaces/location";
+import TextArea from "../../../components/atom/TextArea";
+import TextInput from "../../../components/atom/TextInput";
+import Search from "../../../components/organism/Search";
 
 interface EventSideDrawerProps {
   isOpen: boolean;
@@ -28,7 +32,6 @@ export function EventSideDrawer({
   isOpen,
   onClose,
   events,
-
   handleClick,
   addEventForm,
   setAddEventForm,
@@ -39,6 +42,7 @@ export function EventSideDrawer({
   title,
 }: EventSideDrawerProps) {
   const { isMobile } = useDeviceQueries();
+
   const handleIsMultipleDaysChange = () => {
     setAddEventForm({
       ...addEventForm,
@@ -50,7 +54,7 @@ export function EventSideDrawer({
     setSelectedEvent(event);
   };
 
-  const handleDateSelect = (date: string) => {
+  const handleDateSelect = (date: string | null) => {
     setAddEventForm((form) => ({
       ...form,
       eventDate: moment(date).format("DD/MM/YYYY"),
@@ -91,6 +95,20 @@ export function EventSideDrawer({
     setAddEventForm({ ...addEventForm, location: selectedLocations });
   };
 
+  const handleIsAllLocationsChange = () => {
+    let selectedLocations: Location[] = [];
+    if (addEventForm.location?.length) {
+      selectedLocations = [];
+    } else {
+      selectedLocations = locations;
+    }
+    setAddEventForm({
+      ...addEventForm,
+      location: selectedLocations,
+      isAllLocations: !addEventForm.isAllLocations,
+    });
+  };
+
   const handleEventClick = () => {
     const event: Event = {
       eventDate: addEventForm.eventDate,
@@ -110,13 +128,15 @@ export function EventSideDrawer({
       isOpen={isOpen}
       onClose={onClose}
       position={isMobile ? "bottom" : "right"}
+      height="90%"
       title={title}
     >
       <div className="mt-10">
         {events.length > 0 && (
           <div>
             <Search
-              placeholder={selectedEvent?.eventName || "Event name"}
+              placeholder={"Event name"}
+              defaultSelected={selectedEvent}
               list={events}
               onSelect={onSearchSelect}
             />
@@ -124,15 +144,17 @@ export function EventSideDrawer({
         )}
       </div>
 
-      {/* <div className="mt-6">
-        <Datepicker
+      <div className="mt-6">
+        <MyDatepicker
           onSelect={handleDateSelect}
-          placeholder={addEventForm.eventDate || ""}
+          value={addEventForm.eventDate || ""}
+          placeholder="Pick the day"
           disabled={isEdit ? true : false}
         />
         {addEventForm.isMultipleDays && (
           <div className="mt-4">
-            <Datepicker
+            <MyDatepicker
+              // value={addEventForm.eventEndDate || ""}
               onSelect={handleEndDateSelect}
               placeholder="Select end date"
             />
@@ -151,26 +173,22 @@ export function EventSideDrawer({
             Multiple Days
           </span>
         </label>
-      </div> */}
+      </div>
 
       {selectedEvent?.isSunday && (
         <div className="mt-6">
-          <input
-            type={"text"}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder={"Sermon Topic"}
-            value={addEventForm.sermonTopic}
-            onChange={(e) => handleSermonTopicChange(e.target.value)}
+          <TextInput
+            placeholder="Sermon Topic"
+            value={addEventForm.sermonTopic || ""}
+            onChange={handleSermonTopicChange}
           />
           <div>
             <div className="mt-4">
-              <textarea
-                rows={4}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              <TextArea
                 placeholder="Sermon Notes"
-                value={addEventForm.sermonNote}
-                onChange={(e) => handleSermonNoteChange(e.target.value)}
-              ></textarea>
+                value={addEventForm.sermonNote || ""}
+                onChange={handleSermonNoteChange}
+              />
             </div>
           </div>
         </div>
@@ -189,11 +207,27 @@ export function EventSideDrawer({
             selectedData={addEventForm.location}
             onCheckboxClick={handleLocationSelect}
           />
+
+          <label className="inline-flex items-center cursor-pointer mt-4">
+            <input
+              type="checkbox"
+              value=""
+              className="sr-only peer"
+              checked={addEventForm.isAllLocations}
+              onChange={handleIsAllLocationsChange}
+            />
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              All Locations
+            </span>
+          </label>
         </div>
       )}
 
       <div className="mt-10">
-        <CustomButton onClick={handleEventClick}>{title}</CustomButton>
+        <PrimaryButton onClick={handleEventClick} rounded={true}>
+          {isEdit ? "Update Event" : "Add Event"}
+        </PrimaryButton>
       </div>
     </CustomDrawer>
   );

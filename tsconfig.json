@@ -2,9 +2,16 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "dom", "es2015"],
     "module": "ESNext",
     "skipLibCheck": true,
+
+    /* From tailwind docs*/
+    "outDir": "./lib/cjs/",
+    "sourceMap": true,
+    "declaration": true,
+    "noImplicitAny": true,
+    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -27,5 +34,6 @@
     "src/custom.d.ts",
     "global.d.ts"
   ],
+  "exclude": ["node_modules", "dist", "lib"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

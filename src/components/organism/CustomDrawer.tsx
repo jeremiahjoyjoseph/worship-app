@@ -8,6 +8,7 @@ interface CustomDrawerProps {
   position: "left" | "right" | "top" | "bottom";
   title: string;
   width?: string; // Optional width prop
+  height?: string; // Optional width prop
 }
 
 export function CustomDrawer({
@@ -17,10 +18,12 @@ export function CustomDrawer({
   position,
   title,
   width,
+  height,
 }: CustomDrawerProps) {
   const { isMobile } = useDeviceQueries();
   const sideDrawerMobileStyle = {
     width: width || (position === "bottom" ? "100%" : "80%"),
+    height: height || "",
     borderTopLeftRadius: "16px",
     borderTopRightRadius: "16px",
   };

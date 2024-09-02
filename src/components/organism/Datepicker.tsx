@@ -4,12 +4,14 @@ interface MyDatepickerProps {
   onSelect: (param1: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  value?: string;
 }
 
 const MyDatepicker: FC<MyDatepickerProps> = ({
   onSelect,
   placeholder,
   disabled,
+  value,
 }) => {
   const datepickerRef = useRef<HTMLInputElement>(null);
 
@@ -18,7 +20,7 @@ const MyDatepicker: FC<MyDatepickerProps> = ({
 
     if (datepickerRef.current) {
       // Initialize the datepicker with the autoHide option set to true
-      datepickerInstance = new Datepicker(datepickerRef.current, {
+      datepickerInstance = new window.Datepicker(datepickerRef.current, {
         format: "dd-mm-yyyy",
         autohide: true, // This option hides the datepicker after selecting a date
       });
@@ -59,6 +61,7 @@ const MyDatepicker: FC<MyDatepickerProps> = ({
           placeholder={placeholder || "Select a date"}
           ref={datepickerRef}
           disabled={disabled}
+          value={value}
         />
       </div>
     </div>

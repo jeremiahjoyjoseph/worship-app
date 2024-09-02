@@ -1,14 +1,13 @@
-import { FC, useState } from "react";
-import { LocationSelect } from "./addEventModal";
+import { FC, useEffect, useRef, useState } from "react";
+import { Location } from "../../../interfaces/location";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
-import { Location } from "../../../interfaces/event";
 
 interface MultiSelectProps {
   value: string;
   placeholder: string;
   data: Location[];
   selectedData?: Location[];
-  onCheckboxClick: (param1: LocationSelect) => void;
+  onCheckboxClick: (param1: Location) => void;
 }
 
 const MultiSelect: FC<MultiSelectProps> = ({
@@ -20,8 +19,26 @@ const MultiSelect: FC<MultiSelectProps> = ({
 }) => {
   const [dropdownIsOpen, setDropdownIsOpen] = useState<boolean>(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setDropdownIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <button
         className="text-left bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         onClick={() => setDropdownIsOpen(!dropdownIsOpen)}
@@ -36,7 +53,6 @@ const MultiSelect: FC<MultiSelectProps> = ({
                 <li onClick={() => onCheckboxClick(item)} key={item._id}>
                   <div className="flex items-center">
                     <input
-                      id="checkbox-item-1"
                       type="checkbox"
                       checked={
                         selectedData?.find((x) => x._id === item._id)
@@ -46,10 +62,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
                       onChange={() => onCheckboxClick(item)}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                     />
-                    <label
-                      id="checkbox-item-1"
-                      className="ms-2 text-md font-medium text-gray-900 dark:text-gray-300"
-                    >
+                    <label className="ms-2 text-md font-medium text-gray-900 dark:text-gray-300">
                       {capitalizeFirstLetter(item.name)}
                     </label>
                   </div>

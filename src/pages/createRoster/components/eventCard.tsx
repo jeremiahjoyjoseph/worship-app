@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
-import { Event, Location } from "../../../interfaces/event";
+import { Event } from "../../../interfaces/event";
 import { AddEventFormInterface } from "../../../interfaces/roster";
 import { capitalizeFirstLetter } from "../../../util/helperFunctions";
 import { EventSideDrawer } from "./eventSideDrawer";
+import { Location } from "../../../interfaces/location";
 
 interface EventCardProps {
   event: Event;

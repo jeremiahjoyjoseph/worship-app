@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Event } from "../../../interfaces/event";
-import { capitalizeFirstLetter } from "../../../util/helperFunctions";
+import React, { useEffect, useRef, useState } from "react";
+import { Event } from "../../interfaces/event";
+import { capitalizeFirstLetter } from "../../util/helperFunctions";
 
 interface SearchProps {
   list: Event[];
@@ -15,11 +15,11 @@ const Search: React.FC<SearchProps> = ({
   onSelect,
   defaultSelected,
 }) => {
-  const [searchTerm, setSearchTerm] = useState<string>(
-    defaultSelected?.eventName || ""
-  );
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredOptions, setFilteredOptions] = useState<Event[]>(list);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -61,14 +61,33 @@ const Search: React.FC<SearchProps> = ({
     setIsFocused(true);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setIsFocused(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <div className="relative">
         <input
           type={"text"}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder={placeholder}
-          value={capitalizeFirstLetter(searchTerm)}
+          value={
+            capitalizeFirstLetter(searchTerm) || defaultSelected?.eventName
+          }
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={handleFocus}
         />

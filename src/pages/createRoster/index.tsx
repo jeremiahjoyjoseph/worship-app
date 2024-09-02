@@ -1,12 +1,14 @@
 import { FC, useEffect, useState } from "react";
 import PrimaryButton from "../../components/molecule/PrimaryButton";
-import { Event, Location } from "../../interfaces/event";
+import { Event } from "../../interfaces/event";
 import { AddEventFormInterface } from "../../interfaces/roster";
 import { getLocationsApi } from "../../services/location";
 import { createRosterApi, getEventsApi } from "../../services/roster";
 import EventCard from "./components/eventCard";
 import { EventSideDrawer } from "./components/eventSideDrawer";
 import SecondaryButton from "../../components/molecule/SecondaryButton";
+import { Location } from "../../interfaces/location";
+import TextInput from "../../components/atom/TextInput";
 
 interface CreateRosterProps {}
 
@@ -17,13 +19,14 @@ const CreateRoster: FC<CreateRosterProps> = () => {
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
     eventDate: "",
+    isAllLocations: false,
     isMultipleDays: false,
     sermonTopic: "",
     sermonNote: "",
     location: [],
   });
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [rosterName, setRosterName] = useState<string>("");
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
@@ -63,6 +66,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
     setAddEventForm({
       eventDate: "",
       isMultipleDays: false,
+      isAllLocations: false,
       sermonTopic: "",
       sermonNote: "",
       location: [],
@@ -97,8 +101,12 @@ const CreateRoster: FC<CreateRosterProps> = () => {
       });
   };
 
+  const handleRosterNameChange = (name: string) => {
+    setRosterName(name);
+  };
+
   return (
-    <div className="px-6 pt-6 md:px-8 md:pt-8 lg:px-10 lg:pt-10">
+    <div className="overflow-y-scroll pb-[100px] px-6 pt-6 md:px-8 md:pt-8 lg:px-10 lg:pt-10">
       <div className="mt-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
@@ -152,12 +160,20 @@ const CreateRoster: FC<CreateRosterProps> = () => {
         <h2 className="text-4xl font-extrabold dark:text-white">
           Create Roster
         </h2>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400 mt-2">
+        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-2">
           Set the dates and give the roster a name to get started!
         </p>
       </div>
 
       <div className="text-left mt-8">
+        <TextInput
+          placeholder="Roster Name"
+          value={rosterName || ""}
+          onChange={handleRosterNameChange}
+        />
+      </div>
+
+      <div className="text-left mt-4">
         <SecondaryButton onClick={openDrawer} fullWidth={false}>
           <svg
             className="w-6 h-6 text-white-800 dark:text-white"
@@ -179,6 +195,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
           Add Event
         </SecondaryButton>
       </div>
+
       <div className="mt-8">
         <div className="flex flex-col gap-4 mt-8">
           {selectedEvents &&

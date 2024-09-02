@@ -10,8 +10,3 @@ export interface Event {
   sermonNote?: string;
   location: Location[];
 }
-
-export interface Location {
-  name: string;
-  _id: string;
-}

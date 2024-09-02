@@ -6,6 +6,7 @@ interface SecondaryButtonProps {
   additionalClasses?: string;
   children: React.ReactNode;
   fullWidth?: boolean;
+  rounded?: boolean;
 }
 
 const SecondaryButton: React.FC<SecondaryButtonProps> = ({
@@ -13,12 +14,13 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   additionalClasses = "",
   children,
   fullWidth = true,
+  rounded = false,
 }) => {
   return (
     <CustomButton
       style={`flex gap-2 items-center justify-center h-[50px] font-medium text-md px-5 py-2.5 focus:outline-none text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 ${
         fullWidth ? "w-full" : "rounded-lg w-auto"
-      } ${additionalClasses}`}
+      } ${rounded ? "rounded-lg" : ""} ${additionalClasses}`}
       onClick={onClick}
     >
       {children}

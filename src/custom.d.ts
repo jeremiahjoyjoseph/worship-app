@@ -1,7 +1,6 @@
-// src/global.d.ts
+// src/custom.d.ts
 
 declare module "flowbite-datepicker";
-declare module "flowbite-datepicker/dist/datepicker.min.css";
 
 interface DatepickerOptions {
   format?: string;
