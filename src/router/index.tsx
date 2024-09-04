@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import DashboardPage from "../pages";
+import AllRosters from "../pages/allRosters";
+import CreateRoster from "../pages/createRoster";
 import SubmitAvailability from "../pages/submitAvailability";
 import SelectDates from "../pages/submitAvailability/pages/selectDates";
 import ThankYou from "../pages/submitAvailability/pages/thankYou";
-import CreateRoster from "../pages/createRoster";
-import AllRosters from "../pages/allRosters";
 
 const AppRouter: FC = () => {
   return (

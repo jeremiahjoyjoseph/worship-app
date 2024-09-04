@@ -18,8 +18,9 @@ interface EventSideDrawerProps {
   onClose: () => void;
 
   events: Event[];
-  selectedEvent: Event | undefined;
-  setSelectedEvent: React.Dispatch<React.SetStateAction<Event | undefined>>;
+  editEvent?: Event;
+  selectedEventType: Event | undefined;
+  setSelectedEventType: React.Dispatch<React.SetStateAction<Event | undefined>>;
   isEdit?: boolean;
   handleClick?: (param1: Event) => void;
   addEventForm: AddEventFormInterface;
@@ -36,10 +37,11 @@ export function EventSideDrawer({
   addEventForm,
   setAddEventForm,
   isEdit,
-  selectedEvent,
-  setSelectedEvent,
+  selectedEventType,
+  setSelectedEventType,
   locations,
   title,
+  editEvent,
 }: EventSideDrawerProps) {
   const { isMobile } = useDeviceQueries();
 
@@ -51,7 +53,7 @@ export function EventSideDrawer({
   };
 
   const onSearchSelect = (event: Event) => {
-    setSelectedEvent(event);
+    setSelectedEventType(event);
   };
 
   const handleDateSelect = (date: string | null) => {
@@ -110,16 +112,35 @@ export function EventSideDrawer({
   };
 
   const handleEventClick = () => {
-    const event: Event = {
-      eventDate: addEventForm.eventDate,
-      eventName: selectedEvent?.eventName || "",
-      minAge: selectedEvent?.minAge,
-      maxAge: selectedEvent?.maxAge,
-      isSunday: selectedEvent?.isSunday || false,
-      sermonTopic: addEventForm.sermonTopic,
-      sermonNote: addEventForm.sermonNote,
-      location: addEventForm.location || [],
-    };
+    let event: Event;
+
+    //Add unique ID if its a new event
+    if (isEdit) {
+      event = {
+        ...editEvent,
+        eventDate: addEventForm.eventDate,
+        eventName: selectedEventType?.eventName || "",
+        minAge: selectedEventType?.minAge,
+        maxAge: selectedEventType?.maxAge,
+        isSunday: selectedEventType?.isSunday || false,
+        sermonTopic: addEventForm.sermonTopic,
+        sermonNote: addEventForm.sermonNote,
+        location: addEventForm.location || [],
+      };
+    } else {
+      event = {
+        eventDate: addEventForm.eventDate,
+        eventName: selectedEventType?.eventName || "",
+        minAge: selectedEventType?.minAge,
+        maxAge: selectedEventType?.maxAge,
+        isSunday: selectedEventType?.isSunday || false,
+        sermonTopic: addEventForm.sermonTopic,
+        sermonNote: addEventForm.sermonNote,
+        location: addEventForm.location || [],
+        uniqueId: Date.now().toString(),
+      };
+    }
+
     handleClick && handleClick(event);
   };
 
@@ -136,7 +157,7 @@ export function EventSideDrawer({
           <div>
             <Search
               placeholder={"Event name"}
-              defaultSelected={selectedEvent}
+              defaultSelected={selectedEventType}
               list={events}
               onSelect={onSearchSelect}
             />
@@ -149,7 +170,6 @@ export function EventSideDrawer({
           onSelect={handleDateSelect}
           value={addEventForm.eventDate || ""}
           placeholder="Pick the day"
-          disabled={isEdit ? true : false}
         />
         {addEventForm.isMultipleDays && (
           <div className="mt-4">
@@ -175,7 +195,7 @@ export function EventSideDrawer({
         </label>
       </div>
 
-      {selectedEvent?.isSunday && (
+      {selectedEventType?.isSunday && (
         <div className="mt-6">
           <TextInput
             placeholder="Sermon Topic"
@@ -194,7 +214,7 @@ export function EventSideDrawer({
         </div>
       )}
 
-      {selectedEvent && (
+      {selectedEventType && (
         <div className="mt-6">
           <MultiSelect
             value={
@@ -208,19 +228,21 @@ export function EventSideDrawer({
             onCheckboxClick={handleLocationSelect}
           />
 
-          <label className="inline-flex items-center cursor-pointer mt-4">
-            <input
-              type="checkbox"
-              value=""
-              className="sr-only peer"
-              checked={addEventForm.isAllLocations}
-              onChange={handleIsAllLocationsChange}
-            />
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              All Locations
-            </span>
-          </label>
+          {!isEdit && (
+            <label className="inline-flex items-center cursor-pointer mt-4">
+              <input
+                type="checkbox"
+                value=""
+                className="sr-only peer"
+                checked={addEventForm.isAllLocations}
+                onChange={handleIsAllLocationsChange}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                All Locations
+              </span>
+            </label>
+          )}
         </div>
       )}
 

@@ -1,20 +1,22 @@
 import { FC, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import TextInput from "../../components/atom/TextInput";
 import PrimaryButton from "../../components/molecule/PrimaryButton";
+import SecondaryButton from "../../components/molecule/SecondaryButton";
 import { Event } from "../../interfaces/event";
+import { Location } from "../../interfaces/location";
 import { AddEventFormInterface } from "../../interfaces/roster";
 import { getLocationsApi } from "../../services/location";
 import { createRosterApi, getEventsApi } from "../../services/roster";
 import EventCard from "./components/eventCard";
 import { EventSideDrawer } from "./components/eventSideDrawer";
-import SecondaryButton from "../../components/molecule/SecondaryButton";
-import { Location } from "../../interfaces/location";
-import TextInput from "../../components/atom/TextInput";
 
 interface CreateRosterProps {}
 
 const CreateRoster: FC<CreateRosterProps> = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<Event>();
+  const [selectedEventType, setSelectedEventType] = useState<Event>();
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [addEventForm, setAddEventForm] = useState<AddEventFormInterface>({
@@ -76,7 +78,7 @@ const CreateRoster: FC<CreateRosterProps> = () => {
 
   const removeEvent = (event: Event) => {
     const updatedEvents = selectedEvents.filter(
-      (x) => x.eventDate !== event.eventDate
+      (x) => x.uniqueId !== event.uniqueId
     );
     setSelectedEvents(updatedEvents);
   };
@@ -84,17 +86,21 @@ const CreateRoster: FC<CreateRosterProps> = () => {
   const updateEvent = (event: Event) => {
     const newSelectedEvents = selectedEvents;
     newSelectedEvents.forEach((x) => {
-      if (x.eventDate === event.eventDate) {
+      if (x.uniqueId === event.uniqueId) {
         Object.assign(x, event);
       }
     });
     setSelectedEvents(newSelectedEvents);
   };
 
+  const duplicateEvent = (event: Event) => {
+    setSelectedEvents([...selectedEvents, event]);
+  };
+
   const handleCreateRoster = () => {
     createRosterApi(selectedEvents)
-      .then((response) => {
-        console.log(response);
+      .then(() => {
+        navigate("/roster/all");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -201,12 +207,13 @@ const CreateRoster: FC<CreateRosterProps> = () => {
           {selectedEvents &&
             selectedEvents.map((event) => (
               <EventCard
-                key={event._id}
+                key={event.uniqueId}
                 event={event}
                 allEvents={events}
                 allLocations={locations}
                 removeEvent={removeEvent}
                 updateEvent={updateEvent}
+                duplicateEvent={duplicateEvent}
               />
             ))}
         </div>
@@ -227,8 +234,8 @@ const CreateRoster: FC<CreateRosterProps> = () => {
           handleClick={onAddEvent}
           addEventForm={addEventForm}
           setAddEventForm={setAddEventForm}
-          selectedEvent={selectedEvent}
-          setSelectedEvent={setSelectedEvent}
+          selectedEventType={selectedEventType}
+          setSelectedEventType={setSelectedEventType}
           locations={locations}
           title="With passion and purpose"
         />

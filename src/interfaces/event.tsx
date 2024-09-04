@@ -9,4 +9,5 @@ export interface Event {
   sermonTopic?: string;
   sermonNote?: string;
   location: Location[];
+  uniqueId?: string;
 }
