@@ -6,6 +6,7 @@ import CreateRoster from "../pages/createRoster";
 import SubmitAvailability from "../pages/submitAvailability";
 import SelectDates from "../pages/submitAvailability/pages/selectDates";
 import ThankYou from "../pages/submitAvailability/pages/thankYou";
+import ScheduleRoster from "../pages/scheduleRoster";
 
 const AppRouter: FC = () => {
   return (
@@ -14,6 +15,11 @@ const AppRouter: FC = () => {
 
       <Route path="/roster/create" element={<CreateRoster />} index />
       <Route path="/roster/all" element={<AllRosters />} index />
+      <Route
+        path="/roster/schedule/:rosterId"
+        element={<ScheduleRoster />}
+        index
+      />
 
       <Route
         path="/submit/availability/:rosterId"
